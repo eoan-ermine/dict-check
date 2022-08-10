@@ -9,9 +9,17 @@ using namespace clang;
 class FindDeclVisitor
   : public RecursiveASTVisitor<FindDeclVisitor> {
 public:
-  bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {
-    llvm::outs() << "Find declaration of " << Declaration->getNameAsString();
+  bool VisitDeclaratorDecl(DeclaratorDecl *Declaration) {
+    print(Declaration);
     return true;
+  }
+  bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {
+    print(Declaration);
+    return true;
+  }
+private:
+  void print(NamedDecl *Decl) {
+    llvm::outs() << "Find declaration of " << Decl->getNameAsString() << '\n';
   }
 };
 
