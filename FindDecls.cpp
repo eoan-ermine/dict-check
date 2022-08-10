@@ -1,3 +1,7 @@
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/Frontend/CompilerInstance.h"
@@ -42,6 +46,19 @@ public:
 
 int main(int argc, char **argv) {
   if (argc > 1) {
-    clang::tooling::runToolOnCode(std::make_unique<FindDeclAction>(), argv[1]);
+    std::ostringstream sourceBuffer;
+    std::ifstream stream(argv[1]);
+    std::string line; 
+
+    if(!stream.is_open()) {
+      llvm::outs() << "failed to open " << argv[1] << '\n';
+      return 1;
+    }
+
+    while (std::getline(stream, line)) {
+      sourceBuffer << line << '\n';
+    }
+
+    clang::tooling::runToolOnCode(std::make_unique<FindDeclAction>(), sourceBuffer.str());
   }
 }
