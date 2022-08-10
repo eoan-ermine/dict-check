@@ -9,21 +9,15 @@ using namespace clang;
 class FindDeclVisitor
   : public RecursiveASTVisitor<FindDeclVisitor> {
 public:
-  explicit FindDeclVisitor(ASTContext *Context)
-    : Context(Context) {}
-
   bool VisitCXXRecordDecl(CXXRecordDecl *Declaration) {
-    llvm::outs << "Find declaration of " << Declaration->getNameAsString();
+    llvm::outs() << "Find declaration of " << Declaration->getNameAsString();
     return true;
   }
-
-private:
-  ASTContext *Context;
 };
 
 class FindDeclConsumer : public clang::ASTConsumer {
 public:
-  virtual void HandleTranslationUnit(clang::ASTContext &Context) {
+  virtual void HandleTranslationUnit(clang::ASTContext &Context) override {
     Visitor.TraverseDecl(Context.getTranslationUnitDecl());
   }
 private:
@@ -33,13 +27,13 @@ private:
 class FindDeclAction : public clang::ASTFrontendAction {
 public:
   virtual std::unique_ptr<clang::ASTConsumer> CreateASTConsumer(
-    clang::CompilerInstance &Compiler, llvm::StringRef InFile) {
+    clang::CompilerInstance &Compiler, llvm::StringRef InFile) override {
     return std::make_unique<FindDeclConsumer>();
   }
 };
 
 int main(int argc, char **argv) {
   if (argc > 1) {
-    clang::tooling::runToolOnCode(std::make_unique<FindDeclVisitor>(), argv[1]);
+    clang::tooling::runToolOnCode(std::make_unique<FindDeclAction>(), argv[1]);
   }
 }
