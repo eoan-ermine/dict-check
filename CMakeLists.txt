@@ -1,14 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
 project(dict-check)
+cmake_minimum_required(VERSION 3.16)
 
-set(LLVM_LINK_COMPONENTS
-  Support
-)
-
-add_clang_executable(dict-check FindDecls.cpp)
-
-target_link_libraries(dict-check
-  PRIVATE
-  clangAST clangBasic clangFrontend
-  clangSerialization clangTooling
-)
+add_subdirectory(recursive-visitor)
