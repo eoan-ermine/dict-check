@@ -14,7 +14,12 @@ class DeclPrinter : public MatchFinder::MatchCallback {
 public:
   virtual void run(const MatchFinder::MatchResult &Result) override {
     if (const NamedDecl *Decl = Result.Nodes.getNodeAs<clang::NamedDecl>("decl")) {
-      llvm::outs() << "Found declaration of " << Decl->getNameAsString() << '\n';
+      FullSourceLoc FullLocation = Result.Context->getFullLoc(Decl->getBeginLoc());
+      if (FullLocation.isValid()) {
+        llvm::outs() << "found declaration of " << Decl->getNameAsString()
+                     << " at " << FullLocation.getSpellingLineNumber() << ":"
+                     << FullLocation.getSpellingColumnNumber() << "\n";
+      }
     }
   }
 };
